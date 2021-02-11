@@ -1,2 +1,38 @@
-package com.example.demo.model;public class JournalEntry {
+package com.example.demo.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+public class JournalEntry {
+
+    private final UUID id;
+    private final String title;
+    private final String markdown;
+    private final String html;
+
+    public JournalEntry(@JsonProperty("id") UUID id,
+                @JsonProperty("title") String title,
+                @JsonProperty("markdown") String markdown,
+                @JsonProperty("html") String html
+    ) {
+        this.id = id;
+        this.title = title;
+        this.markdown = markdown;
+        this.html = html;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMarkdown() {return markdown;}
+
+    public String getHtml() {return html;}
 }
