@@ -21,7 +21,7 @@ public class PersonController {
 
     @PostMapping
     public void addPerson(@RequestBody Person person) {
-        personService.addPerson(person);
+        personService.addUser(person);
     }
 
     @GetMapping
