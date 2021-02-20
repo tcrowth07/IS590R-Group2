@@ -1,4 +1,7 @@
 CREATE TABLE person (
     id UUID NOT NULL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    Password Varchar(50)
 );
+
