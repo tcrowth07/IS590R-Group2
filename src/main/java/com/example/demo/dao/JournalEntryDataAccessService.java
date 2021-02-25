@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository("postgres")
+@Repository("journalEntryPostgres")
 public class JournalEntryDataAccessService implements JournalEntryDao{
 
     private final JdbcTemplate jdbcTemplate;
@@ -26,13 +26,26 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
 
     @Override
     public List<JournalEntry> selectAllJournalEntries() {
-        final String sql = "SELECT id, title, markdown, html FROM journalEntry";
+        final String sql = "SELECT id, title, markdown, html, userid FROM journalEntry";
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
             String title = resultSet.getString("title");
             String markdown = resultSet.getString("markdown");
-            String html = resultSet.getString("html"); //?
-            return new JournalEntry(id, title, markdown, html);
+            String html = resultSet.getString("html");
+            UUID userid = UUID.fromString(resultSet.getString("userid"));
+            return new JournalEntry(id, title, markdown, html, userid);
+        });
+    }
+
+    @Override
+    public List<JournalEntry> selectAllJournalEntriesByUserId(UUID userid) {
+        final String sql = "SELECT id, title, markdown, html, userid FROM journalEntry WHERE userid = ?";
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
+            UUID id = UUID.fromString(resultSet.getString("id"));
+            String title = resultSet.getString("title");
+            String markdown = resultSet.getString("markdown");
+            String html = resultSet.getString("html");
+            return new JournalEntry(id, title, markdown, html, userid);
         });
     }
 
@@ -47,7 +60,8 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
                     String title = resultSet.getString("title");
                     String markdown = resultSet.getString("markdown");
                     String html = resultSet.getString("html");
-                    return new JournalEntry(journalEntryId, title, markdown, html);
+                    UUID userid = UUID.fromString(resultSet.getString("userid"));
+                    return new JournalEntry(journalEntryId, title, markdown, html, userid);
                 });
         return Optional.ofNullable(journalEntry);
     }

@@ -29,6 +29,11 @@ public class JournalEntryController {
         return journalEntryService.getAllJournalEntries();
     }
 
+    @GetMapping(path = "{userid}")
+    public List<JournalEntry> getAllJournalEntriesByUserId(@PathVariable("userid") UUID userid){
+        return journalEntryService.getAllJournalEntriesByUserId(userid);
+    }
+
     @GetMapping(path = "{id}")
     public JournalEntry getJournalEntryById(@PathVariable("id") UUID id){
         return journalEntryService.getJournalEntryById(id).orElse(null);

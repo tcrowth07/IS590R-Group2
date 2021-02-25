@@ -18,6 +18,8 @@ public interface JournalEntryDao {
 
     List<JournalEntry> selectAllJournalEntries();
 
+    List<JournalEntry> selectAllJournalEntriesByUserId(UUID userid);
+
     Optional<JournalEntry> selectJournalEntryById(UUID id);
 
     int deleteJournalEntryById(UUID id);

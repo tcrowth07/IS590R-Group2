@@ -16,7 +16,7 @@ public class JournalEntryService {
     private final JournalEntryDao journalEntryDao;
 
     @Autowired
-    public JournalEntryService(@Qualifier("postgres") JournalEntryDao journalEntryDao) {
+    public JournalEntryService(@Qualifier("journalEntryPostgres") JournalEntryDao journalEntryDao) {
         this.journalEntryDao = journalEntryDao;
     }
 
@@ -26,6 +26,10 @@ public class JournalEntryService {
 
     public List<JournalEntry> getAllJournalEntries() {
         return journalEntryDao.selectAllJournalEntries();
+    }
+
+    public List<JournalEntry> getAllJournalEntriesByUserId(UUID userid) {
+        return journalEntryDao.selectAllJournalEntriesByUserId(userid);
     }
 
     public Optional<JournalEntry> getJournalEntryById(UUID id) {

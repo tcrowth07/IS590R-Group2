@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository("postgres")
+@Repository("UserPostgres")
 public class UserDataAccessService implements UserDao {
 
     private final JdbcTemplate jdbcTemplate;
@@ -26,7 +26,7 @@ public class UserDataAccessService implements UserDao {
 
     @Override
     public List<User> selectAllUsers() {
-        final String sql = "SELECT id, name, email FROM user";
+        final String sql = "SELECT id, name, email FROM ApplicationUser";
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
             String name = resultSet.getString("name");
@@ -38,7 +38,7 @@ public class UserDataAccessService implements UserDao {
 
     @Override
     public Optional<User> selectUserById(UUID id) {
-        final String sql = "SELECT id, name FROM user WHERE id = ?";
+        final String sql = "SELECT id, name FROM ApplicationUser WHERE id = ?";
         User user = jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{id},

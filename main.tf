@@ -55,11 +55,11 @@ resource "aws_instance" "web-server-instance" {
 #terraform plan
 #terraform apply
 #terraform destroy #destroys all infrastructure - Don't use without parameters. Rather comment stuff out and just use terraform apply
+#terraform destroy -target aws_instanct.web-server-instance
 #terraform state list #shows all the resources
 #terraform state show aws_vpc.main-vpc
 #terraform output
 #terraform refresh
-#terraform destroy -target aws_instanct.web-server-instance
 #terraform apply -target aws_instanct.web-server-instance
 #terraform apply -var-file terraform.tfvars
 

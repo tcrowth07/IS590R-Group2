@@ -12,16 +12,19 @@ public class JournalEntry {
     private final String title;
     private final String markdown;
     private final String html;
+    private final UUID userid;
 
     public JournalEntry(@JsonProperty("id") UUID id,
                 @JsonProperty("title") String title,
                 @JsonProperty("markdown") String markdown,
-                @JsonProperty("html") String html
+                @JsonProperty("html") String html,
+                @JsonProperty("userid") UUID userid
     ) {
         this.id = id;
         this.title = title;
         this.markdown = markdown;
         this.html = html;
+        this.userid = userid;
     }
 
     public UUID getId() {
@@ -35,4 +38,6 @@ public class JournalEntry {
     public String getMarkdown() {return markdown;}
 
     public String getHtml() {return html;}
+
+    public UUID getUserid() {return userid;}
 }
