@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("api/v1/user")
+@RequestMapping(value = "api/v1/user")
 @RestController
 public class UserController {
 
@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void addUser(@RequestBody User user) {
+    public @ResponseBody void addUser(@RequestBody User user) {
         userService.addUser(user);
     }
 
@@ -35,12 +35,13 @@ public class UserController {
     }
 
     @DeleteMapping(path = "{id}")
-    public void deleteUserById(@PathVariable UUID id){
+    public @ResponseBody void deleteUserById(@PathVariable UUID id){
         userService.deleteUser(id);
     }
 
+    @RequestMapping(value = "/{authorizationUrl}", method = RequestMethod.PUT)
     @PutMapping(path = "{id}")
-    public void updateUser(@PathVariable UUID id, @RequestBody User userToUpdate) {
+    public @ResponseBody void updateUser(@PathVariable UUID id, @RequestBody User userToUpdate) {
         userService.updateUser(id, userToUpdate);
     }
 
