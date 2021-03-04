@@ -15,8 +15,8 @@ terraform {
 # export AWS_DEFAULT_REGION="us-west-2"
 
 #Windows
-# $env:AWS_ACCESS_KEY_ID="AKIATDKSGQGUTZM5MAVH"
-# $env:AWS_SECRET_ACCESS_KEY_ID="GZHKbjToZ7IYrDl64KFvonbPj5WObe5uvtUM"
+# $env:AWS_ACCESS_KEY_ID="<<insert Access Key>>"
+# $env:AWS_SECRET_ACCESS_KEY_ID="insert Secret Access Key"
 # $env:AWS_DEFAULT_REGION="us-west-2"
 provider "aws" {
   region = "us-west-2"
