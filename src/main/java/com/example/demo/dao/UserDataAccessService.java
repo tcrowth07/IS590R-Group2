@@ -3,6 +3,8 @@ package com.example.demo.dao;
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,8 +22,15 @@ public class UserDataAccessService implements UserDao {
     }
 
     @Override
-    public int insertUser(UUID id, User user) {
-        return 0;
+    public String insertUser(UUID id, User user) {
+        final String sql = "INSERT INTO ApplicationUser(id, name, email) values(:id, :name, :email)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("name", user.getName())
+                .addValue("email", user.getEmail());
+                //.addValue("address", user.getPassword());
+        jdbcTemplate.update(sql, parameters);
+        return "User" + user.getName() + "was added.";
     }
 
     @Override
@@ -52,12 +61,16 @@ public class UserDataAccessService implements UserDao {
     }
 
     @Override
-    public int deleteUserById(UUID id) {
-        return 0;
+    public String deleteUserById(UUID id) {
+        final String sql = "DELETE FROM ApplicationUser WHERE id = ?";
+        jdbcTemplate.update(sql);
+        return "User" + id.toString() + "was added.";
     }
 
     @Override
-    public int updateUserById(UUID id, User user) {
-        return 0;
+    public User updateUserById(UUID id, User user) {
+        final String sql = "UPDATE ApplicationUser set values = (:name, :email,:password) where id = ?";
+        jdbcTemplate.update(sql);
+            return user;
     }
 }

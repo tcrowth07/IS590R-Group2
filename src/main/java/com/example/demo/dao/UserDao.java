@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface UserDao {
 
-    int insertUser(UUID id, User user);
+    String insertUser(UUID id, User user);
 
-    default int insertUser(User user) {
+    default String insertUser(User user) {
         UUID id = UUID.randomUUID();
         return insertUser(id, user);
     }
@@ -19,9 +19,9 @@ public interface UserDao {
 
     Optional<User> selectUserById(UUID id);
 
-    int deleteUserById(UUID id);
+    String deleteUserById(UUID id);
 
-    int updateUserById(UUID id, User user);
+    User updateUserById(UUID id, User user);
 
 
 }

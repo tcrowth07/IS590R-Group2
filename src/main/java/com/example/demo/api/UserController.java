@@ -3,6 +3,7 @@ package com.example.demo.api;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,9 @@ public class UserController {
     }
 
     @PostMapping
-    public @ResponseBody void addUser(@RequestBody User user) {
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void addUser(@RequestBody User user) {
         userService.addUser(user);
     }
 
@@ -35,13 +38,17 @@ public class UserController {
     }
 
     @DeleteMapping(path = "{id}")
-    public @ResponseBody void deleteUserById(@PathVariable UUID id){
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void deleteUserById(@PathVariable("id") UUID id){
         userService.deleteUser(id);
     }
 
-    @RequestMapping(value = "/{authorizationUrl}", method = RequestMethod.PUT)
+//    @RequestMapping(value = "/{authorizationUrl}", method = RequestMethod.PUT)
     @PutMapping(path = "{id}")
-    public @ResponseBody void updateUser(@PathVariable UUID id, @RequestBody User userToUpdate) {
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void updateUser(@PathVariable("id") UUID id, @RequestBody User userToUpdate) {
         userService.updateUser(id, userToUpdate);
     }
 

@@ -20,7 +20,7 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public int addUser(User User) {
+    public String addUser(User User) {
         return userDao.insertUser(User);
     }
 
@@ -32,11 +32,11 @@ public class UserService {
         return userDao.selectUserById(id);
     }
 
-    public int deleteUser(UUID id){
+    public String deleteUser(UUID id){
         return userDao.deleteUserById(id);
     }
 
-    public int updateUser(UUID id, User newUser){
+    public User updateUser(UUID id, User newUser){
         return userDao.updateUserById(id, newUser);
     }
 }
