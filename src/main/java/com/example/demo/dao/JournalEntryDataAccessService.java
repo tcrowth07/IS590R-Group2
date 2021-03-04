@@ -20,8 +20,8 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
     }
 
     @Override
-    public int insertJournalEntry(UUID id, JournalEntry journalEntry) {
-        return 0;
+    public String insertJournalEntry(UUID id, JournalEntry journalEntry) {
+        return "";
     }
 
     @Override
@@ -67,13 +67,15 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
     }
 
     @Override
-    public int deleteJournalEntryById(UUID id) {
-        return 0;
+    public String deleteJournalEntryById(UUID id) {
+        final String sql = "DELETE FROM journalEntry WHERE id = ?";
+        jdbcTemplate.update(sql);
+        return "Entry " + id.toString() + " was deleted";
     }
 
     @Override
-    public int updateJournalEntryById(UUID id, JournalEntry journalEntry) {
-        return 0;
+    public String updateJournalEntryById(UUID id, JournalEntry journalEntry) {
+        return "";
     }
     
     

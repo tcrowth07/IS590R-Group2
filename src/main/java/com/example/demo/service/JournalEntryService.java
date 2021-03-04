@@ -20,7 +20,7 @@ public class JournalEntryService {
         this.journalEntryDao = journalEntryDao;
     }
 
-    public int addJournalEntry(JournalEntry JournalEntry) {
+    public String addJournalEntry(JournalEntry JournalEntry) {
         return journalEntryDao.insertJournalEntry(JournalEntry);
     }
 
@@ -36,11 +36,11 @@ public class JournalEntryService {
         return journalEntryDao.selectJournalEntryById(id);
     }
 
-    public int deleteJournalEntry(UUID id){
+    public String deleteJournalEntry(UUID id){
         return journalEntryDao.deleteJournalEntryById(id);
     }
 
-    public int updateJournalEntry(UUID id, JournalEntry newJournalEntry){
+    public String updateJournalEntry(UUID id, JournalEntry newJournalEntry){
         return journalEntryDao.updateJournalEntryById(id, newJournalEntry);
     }
 }

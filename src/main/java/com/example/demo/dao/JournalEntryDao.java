@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public interface JournalEntryDao {
     
-    int insertJournalEntry(UUID id, JournalEntry je);
+    String insertJournalEntry(UUID id, JournalEntry je);
 
-    default int insertJournalEntry(JournalEntry je) {
+    default String insertJournalEntry(JournalEntry je) {
         UUID id = UUID.randomUUID();
         return insertJournalEntry(id, je);
     }
@@ -22,9 +22,9 @@ public interface JournalEntryDao {
 
     Optional<JournalEntry> selectJournalEntryById(UUID id);
 
-    int deleteJournalEntryById(UUID id);
+    String deleteJournalEntryById(UUID id);
 
-    int updateJournalEntryById(UUID id, JournalEntry je);
+    String updateJournalEntryById(UUID id, JournalEntry je);
 
     //String changeMarkdownToHtml(UUID id, JournalEntry je);
     
