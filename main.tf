@@ -24,31 +24,30 @@ provider "aws" {
   secret_key = "<replace this>"
 }
 
-
-resource "aws_instance" "web-server-instance" {
-  ami = "ami-0928f4202481dfdf6"
-  instance_type = "t2.micro"
-  availability_zone = "us-west-2a"
-  key_name = "main-key"
-
-  network_interface {
-    device_index = 0
-    network_interface_id = aws_network_interface.web-server-nic.id
-  }
-
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo apt update -y
-              sudo apt install apache2 -y
-              sudo systemctl start apache2
-              sudo bash -c 'echo your very first web server > /var/www/html/index.html'
-              EOF
-
-  tags = {
-    Name: "IS590R-Ubuntu"
-  }
-}
-
+//
+//resource "aws_instance" "web-server-instance" {
+//  ami = "ami-0928f4202481dfdf6"
+//  instance_type = "t2.micro"
+//  availability_zone = "us-west-2a"
+//  key_name = "main-key"
+//
+//  network_interface {
+//    device_index = 0
+//    network_interface_id = aws_network_interface.web-server-nic.id
+//  }
+//
+//  user_data = <<-EOF
+//              #!/bin/bash
+//              sudo apt update -y
+//              sudo apt install apache2 -y
+//              sudo systemctl start apache2
+//              sudo bash -c 'echo your very first web server > /var/www/html/index.html'
+//              EOF
+//
+//  tags = {
+//    Name: "IS590R-Ubuntu"
+//  }
+//}
 
 
 #terraform init
@@ -76,6 +75,57 @@ resource "aws_instance" "web-server-instance" {
 #reference the variable by using var.subnet-prefix
 
 
+# Create RDS
+resource "aws_db_instance" "postgres" {
+  engine               = "postgresql"
+  instance_class       = "db.t2.micro"
+  name                 = "postgres"
+  username             = "docker"
+  password             = "dockerrocks!"
+  allocated_storage     = 5
+  max_allocated_storage = 15
+}
+
+
+
+#Create ECS
+resource "aws_ecs_service" "postgres-ecs" {
+  name            = "postgres-ecs"
+  desired_count   = 1
+}
+
+
+#Create ECR
+resource "aws_ecr_repository" "postgres-ecr" {
+  name = "postgres-ecr"
+}
+
+resource "aws_ecr_lifecycle_policy" "postgrespoolicy" {
+  repository = aws_ecr_repository.postgres-ecr.name
+
+  policy = <<EOF
+  {
+      "rules": [
+          {
+              "rulePriority": 1,
+              "description": "Expire JournalEntries older than 14 days",
+              "selection": {
+                  "tagStatus": "untagged",
+                  "countType": "sinceImagePushed",
+                  "countUnit": "days",
+                  "countNumber": 14
+              },
+              "action": {
+                  "type": "expire"
+              }
+          }
+      ]
+  }
+EOF
+}
+
+
+
 # Create a VPC
 resource "aws_vpc" "main-vpc" {
   cidr_block = "10.0.0.0/16"
@@ -83,6 +133,7 @@ resource "aws_vpc" "main-vpc" {
     Name = "Production"
   }
 }
+
 
 #Create an Internet Gateway
 
@@ -126,15 +177,15 @@ resource "aws_subnet" "subnet-1" {
 
 
 #Create another Subnet
-
-resource "aws_subnet" "subnet-1" {
-  vpc_id = aws_vpc.main-vpc.id
-  cidr_block = var.subnet-prefix[1]
-  availability_zone = "us-west-2a"
-  tags = {
-    Name= "Prod-public-subnet1"
-  }
-}
+//
+//resource "aws_subnet" "subnet-1" {
+//  vpc_id = aws_vpc.main-vpc.id
+//  cidr_block = var.subnet-prefix[1]
+//  availability_zone = "us-west-2a"
+//  tags = {
+//    Name= "Prod-public-subnet1"
+//  }
+//}
 
 
 
@@ -184,19 +235,19 @@ resource "aws_security_group" "allow_web" {
 }
 
 #Create Network Interface
-resource "aws_network_interface" "web-server-nic" {
-  subnet_id = aws_subnet.subnet-1.id
-  private_ips = ["10.0.1.50"]
-  security_groups = [aws_security_group.allow_web.id]
-}
-
-#Create elastic IP
-resource "aws_eip" "one" {
-  vpc = true
-  network_interface = aws_network_interface.web-server-nic.id
-  associate_with_private_ip = "10.0.1.50"
-  depends_on = [aws_internet_gateway.main-gateway]
-}
+//resource "aws_network_interface" "web-server-nic" {
+//  subnet_id = aws_subnet.subnet-1.id
+//  private_ips = ["10.0.1.50"]
+//  security_groups = [aws_security_group.allow_web.id]
+//}
+//
+//#Create elastic IP
+//resource "aws_eip" "one" {
+//  vpc = true
+//  network_interface = aws_network_interface.web-server-nic.id
+//  associate_with_private_ip = "10.0.1.50"
+//  depends_on = [aws_internet_gateway.main-gateway]
+//}
 
 
 
