@@ -3,10 +3,10 @@ CREATE TABLE journalentry (
     Title VARCHAR(200),
     Markdown VARCHAR,
     HTML VARCHAR,
-    userid UUID,
-    CONSTRAINT fk_user
-       FOREIGN KEY(userid)
-       REFERENCES ApplicationUser(id)
+    userid UUID --,
+--    CONSTRAINT fk_user
+--       FOREIGN KEY(userid)
+--       REFERENCES ApplicationUser(id)
 );
 
 insert into journalentry(id, Title, Markdown, HTML, userID)

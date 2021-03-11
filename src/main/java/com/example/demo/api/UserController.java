@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping()
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void addUser(@RequestBody User user) {
@@ -34,27 +34,25 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public User getUserById(@PathVariable("id") UUID id){
         return userService.getUserById(id).orElse(null);
     }
 
-    @DeleteMapping(path = "{id}")
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @PreAuthorize("hasAuthority('user:write')")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void deleteUserById(@PathVariable("id") UUID id){
+    public @ResponseBody String deleteUserById(@PathVariable("id") UUID id){
         userService.deleteUser(id);
+        return "Deleted";
     }
 
-//    @RequestMapping(value = "/{authorizationUrl}", method = RequestMethod.PUT)
-    @PutMapping(path = "{id}")
     @PreAuthorize("hasAuthority('user:write')")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void updateUser(@PathVariable("id") UUID id, @RequestBody User userToUpdate) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public @ResponseBody String updateUser(@PathVariable("id") UUID id, @RequestBody User userToUpdate) {
         userService.updateUser(id, userToUpdate);
+        return "Updated";
     }
 
 }

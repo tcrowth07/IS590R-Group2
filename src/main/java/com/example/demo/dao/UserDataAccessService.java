@@ -39,7 +39,7 @@ public class UserDataAccessService implements UserDao {
 
     @Override
     public List<User> selectAllUsers() {
-        final String sql = "SELECT id, name, email FROM ApplicationUser";
+        final String sql = "SELECT * FROM ApplicationUser";
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
             String name = resultSet.getString("name");
@@ -51,7 +51,7 @@ public class UserDataAccessService implements UserDao {
 
     @Override
     public Optional<User> selectUserById(UUID id) {
-        final String sql = "SELECT id, name FROM ApplicationUser WHERE id = ?";
+        final String sql = "SELECT * FROM ApplicationUser WHERE id = ?";
         User user = jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{id},
@@ -66,15 +66,21 @@ public class UserDataAccessService implements UserDao {
 
     @Override
     public String deleteUserById(UUID id) {
-        final String sql = "DELETE FROM ApplicationUser WHERE id = ?";
-        jdbcTemplate.update(sql);
+        final String sql = "DELETE FROM ApplicationUser WHERE id = :id";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        namedParameterJdbcTemplate.update(sql, parameters);
         return "User" + id.toString() + "was added.";
     }
 
     @Override
     public User updateUserById(UUID id, User user) {
-        final String sql = "UPDATE ApplicationUser set values = (:name, :email,:password) where id = ?";
-        jdbcTemplate.update(sql);
-            return user;
+        final String sql = "UPDATE ApplicationUser SET name = :name, email = :email where id = :id";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("name", user.getName())
+                .addValue("email", user.getEmail());
+        namedParameterJdbcTemplate.update(sql, parameters);
+        return user;
     }
 }
