@@ -29,12 +29,12 @@ public class JournalEntryController {
         return journalEntryService.getAllJournalEntries();
     }
 
-    @GetMapping(path = "{userid}")
+    @GetMapping(path = "/user/{userid}")
     public List<JournalEntry> getAllJournalEntriesByUserId(@PathVariable("userid") UUID userid){
         return journalEntryService.getAllJournalEntriesByUserId(userid);
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     public JournalEntry getJournalEntryById(@PathVariable("id") UUID id){
         return journalEntryService.getJournalEntryById(id).orElse(null);
     }
