@@ -26,7 +26,7 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
 
     @Override
     public String insertJournalEntry(UUID id, JournalEntry journalEntry) {
-        final String sql = "insert into journalEntry(id, title, markdown, html, userid");
+        final String sql = "insert into journalEntry(id, title, markdown, html, userid), values=(:id, :title, :markdown, :html, :userid)";
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id)
                 .addValue("title", journalEntry.getTitle())
