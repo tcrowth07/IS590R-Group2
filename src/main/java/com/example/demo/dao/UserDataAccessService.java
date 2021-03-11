@@ -34,7 +34,7 @@ public class UserDataAccessService implements UserDao {
                 .addValue("email", user.getEmail());
                 //.addValue("address", user.getPassword());
         namedParameterJdbcTemplate.update(sql, parameters);
-        return "User" + user.getName() + "was added.";
+        return "User " + user.getName() + " was added.";
     }
 
     @Override

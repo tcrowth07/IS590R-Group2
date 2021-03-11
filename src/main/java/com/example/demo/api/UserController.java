@@ -23,8 +23,8 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void addUser(@RequestBody User user) {
-        userService.addUser(user);
+    public String addUser(@RequestBody User user) {
+        return userService.addUser(user);
     }
 
     @GetMapping
