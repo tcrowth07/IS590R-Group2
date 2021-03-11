@@ -20,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping()
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void addUser(@RequestBody User user) {
@@ -32,24 +32,22 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "/{id}")
     public User getUserById(@PathVariable("id") UUID id){
         return userService.getUserById(id).orElse(null);
     }
 
-    @DeleteMapping(path = "{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void deleteUserById(@PathVariable("id") UUID id){
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public @ResponseBody String deleteUserById(@PathVariable("id") UUID id){
+        System.out.println("in delete method");
         userService.deleteUser(id);
+        return "Deleted";
     }
 
-//    @RequestMapping(value = "/{authorizationUrl}", method = RequestMethod.PUT)
-    @PutMapping(path = "{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public void updateUser(@PathVariable("id") UUID id, @RequestBody User userToUpdate) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public @ResponseBody String updateUser(@PathVariable("id") UUID id, @RequestBody User userToUpdate) {
         userService.updateUser(id, userToUpdate);
+        return "Updated";
     }
 
 }

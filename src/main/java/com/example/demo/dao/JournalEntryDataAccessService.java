@@ -3,6 +3,9 @@ package com.example.demo.dao;
 import com.example.demo.model.JournalEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,15 +16,26 @@ import java.util.UUID;
 public class JournalEntryDataAccessService implements JournalEntryDao{
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public JournalEntryDataAccessService(JdbcTemplate jdbcTemplate) {
+    public JournalEntryDataAccessService(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
     public String insertJournalEntry(UUID id, JournalEntry journalEntry) {
-        return "";
+        final String sql = "insert into journalEntry(id, title, markdown, html, userid");
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("title", journalEntry.getTitle())
+                .addValue("markdown", journalEntry.getMarkdown())
+                .addValue("html", journalEntry.getHtml())
+                .addValue("userid", journalEntry.getUserid());
+        //.addValue("address", user.getPassword());
+        namedParameterJdbcTemplate.update(sql, parameters);
+        return "Entry" + journalEntry.getId() + "was added.";
     }
 
     @Override
@@ -68,13 +82,22 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
 
     @Override
     public String deleteJournalEntryById(UUID id) {
-        final String sql = "DELETE FROM journalEntry WHERE id = ?";
-        jdbcTemplate.update(sql);
+        final String sql = "DELETE FROM journalEntry WHERE id = :id";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        namedParameterJdbcTemplate.update(sql, parameters);
         return "Entry " + id.toString() + " was deleted";
     }
 
     @Override
     public String updateJournalEntryById(UUID id, JournalEntry journalEntry) {
+        final String sql = "UPDATE journalEntry SET title = :title, markdown = :markdown, html = :html where id = :id";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id)
+                .addValue("title", journalEntry.getTitle())
+                .addValue("markdown", journalEntry.getMarkdown())
+        .addValue("html", journalEntry.getHtml());
+        namedParameterJdbcTemplate.update(sql, parameters);
         return "";
     }
     
