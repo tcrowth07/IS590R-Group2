@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.JournalEntry;
+import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -53,19 +54,20 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
 
     @Override
     public List<JournalEntry> selectAllJournalEntriesByUserId(UUID userid) {
-        final String sql = "SELECT id, title, markdown, html, userid FROM journalEntry WHERE userid = ?";
+        final String sql = "SELECT * FROM journalEntry WHERE userid = ?";
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
             String title = resultSet.getString("title");
             String markdown = resultSet.getString("markdown");
             String html = resultSet.getString("html");
-            return new JournalEntry(id, title, markdown, html, userid);
+            UUID uid = UUID.fromString(resultSet.getString("userid"));
+            return new JournalEntry(id, title, markdown, html, uid);
         });
     }
 
     @Override
     public Optional<JournalEntry> selectJournalEntryById(UUID id) {
-        final String sql = "SELECT id, title, markdown, html FROM journalEntry WHERE id = ?";
+        final String sql = "SELECT * FROM journalEntry WHERE id = ?";
         JournalEntry journalEntry = jdbcTemplate.queryForObject(
                 sql,
                 new Object[]{id},

@@ -39,7 +39,6 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public @ResponseBody String deleteUserById(@PathVariable("id") UUID id){
-        System.out.println("in delete method");
         userService.deleteUser(id);
         return "Deleted";
     }
