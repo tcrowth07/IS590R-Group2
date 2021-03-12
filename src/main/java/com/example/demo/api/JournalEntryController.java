@@ -10,6 +10,9 @@ import java.util.UUID;
 
 @RequestMapping("api/v1/journalentry")
 @RestController
+
+//NEED JOURNAL SECURITY
+
 public class JournalEntryController {
 
     private final JournalEntryService journalEntryService;
