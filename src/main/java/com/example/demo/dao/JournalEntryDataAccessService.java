@@ -9,9 +9,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository("journalEntryPostgres")
 public class JournalEntryDataAccessService implements JournalEntryDao{
@@ -54,24 +52,25 @@ public class JournalEntryDataAccessService implements JournalEntryDao{
 
     @Override
     public List<JournalEntry> selectAllJournalEntriesByUserId(UUID userid) {
-        final String sql = "SELECT * FROM journalEntry WHERE userid = ?";
-        return jdbcTemplate.query(sql, (resultSet, i) -> {
-            UUID id = UUID.fromString(resultSet.getString("id"));
-            String title = resultSet.getString("title");
-            String markdown = resultSet.getString("markdown");
-            String html = resultSet.getString("html");
-            UUID uid = UUID.fromString(resultSet.getString("userid"));
-            return new JournalEntry(id, title, markdown, html, uid);
-        });
+        final String sql = "SELECT id, title, markdown, html, userid FROM journalEntry WHERE userid = ?";
+        List<JournalEntry> entries = new ArrayList<>();
+        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, userid);
+        for (Map row : rows) {
+            UUID id = UUID.fromString(row.get("id").toString());
+            String title = row.get("title").toString();
+            String markdown = row.get("markdown").toString();
+            String html = row.get("html").toString();
+            UUID uid = UUID.fromString(row.get("userid").toString());
+            JournalEntry entry = new JournalEntry(id, title, markdown, html, uid);
+            entries.add(entry);
+        }
+        return entries;
     }
 
     @Override
     public Optional<JournalEntry> selectJournalEntryById(UUID id) {
         final String sql = "SELECT * FROM journalEntry WHERE id = ?";
-        JournalEntry journalEntry = jdbcTemplate.queryForObject(
-                sql,
-                new Object[]{id},
-                (resultSet, i) -> {
+        JournalEntry journalEntry = jdbcTemplate.queryForObject(sql, new Object[]{id}, (resultSet, i) -> {
                     UUID journalEntryId = UUID.fromString(resultSet.getString("id"));
                     String title = resultSet.getString("title");
                     String markdown = resultSet.getString("markdown");
