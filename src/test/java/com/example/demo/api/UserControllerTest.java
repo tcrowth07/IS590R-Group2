@@ -56,7 +56,7 @@ class UserControllerTest {
     @Test
     void getUserById() throws Exception{
         mvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/user/{id}", "43ae77fc-d738-47c1-9abf-57c488fc277d")
+                .get("/api/v1/user/{id}", "f5b3fe20-d9f9-4f18-95fa-1534aaf584c8")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is(200));
     }
