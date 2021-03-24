@@ -52,13 +52,13 @@ class JournalEntryControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is(200));
     }
 
-//    @Test
-//    void getAllJournalEntriesByUserId() throws Exception {
-//        mvc.perform( MockMvcRequestBuilders
-//                .get("/api/v1/journalentry/user/{id}", "f5b3fe20-d9f9-4f18-95fa-1534aaf584c8")
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().is(200));
-//    }
+    @Test
+    void getAllJournalEntriesByUserId() throws Exception {
+        mvc.perform( MockMvcRequestBuilders
+                .get("/api/v1/journalentry/user/{id}", "f5b3fe20-d9f9-4f18-95fa-1534aaf584c8")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(200));
+    }
 
     @Test
     void getJournalEntryById() throws Exception {
