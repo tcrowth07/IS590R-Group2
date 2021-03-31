@@ -10,8 +10,8 @@ terraform {
 # Configure the AWS Provider
 # Command Line commands for setting them up as environment variables
 #Mac
-# export AWS_ACCESS_KEY_ID="AKIATDKSGQGUTZM5MAVH"
-# export AWS_SECRET_ACCESS_KEY_ID="GZHKbjToZ7IYrDl64KFvonbPj5WObe5uvtUM"
+# export AWS_ACCESS_KEY_ID="<ACCESS_KEY>"
+# export AWS_SECRET_ACCESS_KEY_ID="<SECRET_KEY>"
 # export AWS_DEFAULT_REGION="us-west-2"
 
 #Windows
@@ -76,21 +76,21 @@ provider "aws" {
 
 
 # Create RDS
-resource "aws_db_instance" "postgres" {
-  engine               = "postgresql"
-  instance_class       = "db.t2.micro"
-  name                 = "postgres"
-  username             = "docker"
-  password             = "dockerrocks!"
-  allocated_storage     = 5
-  max_allocated_storage = 15
-}
+//resource "aws_db_instance" "postgres" {
+//  engine               = "postgresql"
+//  instance_class       = "db.t2.micro"
+//  name                 = "postgres"
+//  username             = "docker"
+//  password             = "dockerrocks!"
+//  allocated_storage     = 5
+//  max_allocated_storage = 15
+//}
 
 
 
 #Create ECS
-resource "aws_ecs_service" "postgres-ecs" {
-  name            = "postgres-ecs"
+resource "aws_ecs_service" "application-server-ecs" {
+  name            = "application-server-ecs"
   desired_count   = 1
 }
 
