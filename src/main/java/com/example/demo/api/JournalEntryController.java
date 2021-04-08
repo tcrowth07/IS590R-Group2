@@ -11,6 +11,9 @@ import java.util.UUID;
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/v1/journalentry")
 @RestController
+
+//NEED JOURNAL SECURITY
+
 public class JournalEntryController {
 
     private final JournalEntryService journalEntryService;
