@@ -1,7 +1,6 @@
 package com.example.demo.api;
 
 import com.example.demo.model.User;
-import com.example.demo.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
