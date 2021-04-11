@@ -1,4 +1,4 @@
-package com.example.demo.auth;
+package com.example.demo.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,20 +6,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class ApplicationUser implements UserDetails {
 
-
+    private final UUID id;
+    private final String name;
     private final String username;
     private final String password;
+//    private final String email; //Do we need this?
     private final Set<? extends GrantedAuthority> grantedAuthorities;
     private final boolean isAccountNonExpired;
     private final boolean isAccountNonLocked;
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
 
-    public ApplicationUser(Set<? extends GrantedAuthority> grantedAuthorities, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
-
+    public ApplicationUser(UUID id, Set<? extends GrantedAuthority> grantedAuthorities, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+        this.id = id;
+        this.name = name;
         this.username = username;
         this.password = password;
         this.grantedAuthorities = grantedAuthorities;
@@ -29,6 +33,10 @@ public class ApplicationUser implements UserDetails {
         this.isEnabled = isEnabled;
     }
 
+    //I don't think this needs an override because the UserDetails interface doesn't have the getName method
+    public String getName() {
+        return name;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
