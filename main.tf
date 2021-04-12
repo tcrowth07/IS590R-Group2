@@ -76,32 +76,75 @@ provider "aws" {
 
 
 # Create RDS
-resource "aws_db_instance" "postgres" {
-  engine               = "postgresql"
-  instance_class       = "db.t2.micro"
-  name                 = "postgres"
-  username             = "docker"
-  password             = "dockerrocks!"
-  allocated_storage     = 5
-  max_allocated_storage = 15
+//resource "aws_db_instance" "postgres" {
+//  engine               = "postgresql"
+//  instance_class       = "db.t2.micro"
+//  name                 = "postgres"
+//  username             = "docker"
+//  password             = "dockerrocks!"
+//  allocated_storage     = 5
+//  max_allocated_storage = 15
+//}
+
+
+resource "aws_lb" "my-ecs-lb" {
+  name = "my-ecs-lb"
+  load_balancer_type = "application"
+  internal = false
+  subnets = [aws_subnet.subnet-1]
+  security_groups = [aws_security_group.lb]
+}
+
+
+resource "aws_security_group" "lb" {
+  name = "allow-all-lb"
+  vpc_id = aws_vpc.main-vpc.id
+  ingress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    cidr_blocks = [0.0.0.0/0]
+  }
+  egress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    cidr_blocks = [0.0.0.0/0]
+  }
 }
 
 
 
 #Create ECS
-resource "aws_ecs_service" "postgres-ecs" {
-  name            = "postgres-ecs"
+resource "aws_ecs_service" "service" {
+  name            = "backend-service"
+  cluster = aws_ecs_cluster.web-cluster.id #This needs to be changed
+  task_definition = aws_ecs_task_definition.task-definition-test.arn
   desired_count   = 1
+
+  #not sure if this block is required
+//  ordered_placement_strategy {
+//    type = "binpack"
+//    field = "cpu"
+//  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.lb_target_group.arn
+    container_name = "is590rContainer" #replace this with whatever we call our container
+    container_port = 8080 # not sure if this is the right port or not
+  }
+  launch_type = "EC2"
+  depends_on = [aws_lb_listener.web_listener] #this might can be deleted
 }
 
 
 #Create ECR
-resource "aws_ecr_repository" "postgres-ecr" {
-  name = "postgres-ecr"
+resource "aws_ecr_repository" "is590r" {
+  name = "is590r"
 }
 
-resource "aws_ecr_lifecycle_policy" "postgrespoolicy" {
-  repository = aws_ecr_repository.postgres-ecr.name
+resource "aws_ecr_lifecycle_policy" "postgrespolicy" {
+  repository = aws_ecr_repository.is590r.name
 
   policy = <<EOF
   {
@@ -178,14 +221,14 @@ resource "aws_subnet" "subnet-1" {
 
 #Create another Subnet
 //
-//resource "aws_subnet" "subnet-1" {
-//  vpc_id = aws_vpc.main-vpc.id
-//  cidr_block = var.subnet-prefix[1]
-//  availability_zone = "us-west-2a"
-//  tags = {
-//    Name= "Prod-public-subnet1"
-//  }
-//}
+resource "aws_subnet" "subnet-1" {
+  vpc_id = aws_vpc.main-vpc.id
+  cidr_block = "10.0.200.0/24"
+  availability_zone = "us-west-2a"
+  tags = {
+    Name= "Prod-public-subnet1"
+  }
+}
 
 
 

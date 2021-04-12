@@ -6,12 +6,52 @@ name: Java CI with Maven
 on:
 #  push:
 #    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
 
 jobs:
-  build:
 
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v2
+
+      - name: Setup Terraform
+      - uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform init -input=false
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform plan -no-color -var="key_name=ecs_is590r" -var="cluster_name=ecs_is590r_cluster"
+        continue-on-error: true
+
+#      - name: Terraform Apply
+#        if: github.ref == '/refs/heads/master' && github.event_name == 'push'
+#        run: terraform apply -auto-approve
+
+
+
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +62,8 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+
+  #test:
+  #deploy:
+
+

@@ -4,3 +4,7 @@ app:
     username: docker
     password: dockerrocks!
     pool-size: 30
+  jwt:
+    secretKey: "Our Super Secret Test Key which will get overridden"
+    tokenPrefix: "Bearer "
+    tokenExpirationAfterDays: 10
