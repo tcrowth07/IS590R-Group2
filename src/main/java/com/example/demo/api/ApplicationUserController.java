@@ -42,25 +42,25 @@ public class ApplicationUserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<ApplicationUser> getAllUsers() {
         return applicationUserService.getAllApplicationUsers();
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ApplicationUser getUserById(@PathVariable("id") UUID id){
         return applicationUserService.getApplicationUserById(id).orElse(null);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasAuthority('user:write')")
+//    @PreAuthorize("hasAuthority('user:write')")
     public @ResponseBody String deleteApplicationUserById(@PathVariable("id") UUID id){
         applicationUserService.deleteApplicationUser(id);
         return "Deleted";
     }
 
-    @PreAuthorize("hasAuthority('user:write')")
+//    @PreAuthorize("hasAuthority('user:write')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public @ResponseBody String updateApplicationUser(@PathVariable("id") UUID id, @RequestBody ApplicationUser userToUpdate) {
         applicationUserService.updateApplicationUser(id, userToUpdate);
