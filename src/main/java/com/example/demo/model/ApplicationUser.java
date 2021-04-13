@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.example.demo.security.ApplicationUserRole.ADMIN;
+
 public class ApplicationUser implements UserDetails {
 
     private final UUID id;
@@ -15,18 +17,19 @@ public class ApplicationUser implements UserDetails {
     private final String username;
     private final String password;
 //    private final String email; //Do we need this?
-    private final Set<? extends GrantedAuthority> grantedAuthorities;
+    private final String role;
+    private final Set<? extends GrantedAuthority> grantedAuthorities = ADMIN.getGrantedAuthorities();
     private final boolean isAccountNonExpired;
     private final boolean isAccountNonLocked;
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
-
-    public ApplicationUser(UUID id, Set<? extends GrantedAuthority> grantedAuthorities, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+    //public ApplicationUser(UUID id, Set<? extends GrantedAuthority> grantedAuthorities, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+    public ApplicationUser(UUID id, String role, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.password = password;
-        this.grantedAuthorities = grantedAuthorities;
+        this.role = role;
         this.isAccountNonExpired = isAccountNonExpired;
         this.isAccountNonLocked = isAccountNonLocked;
         this.isCredentialsNonExpired = isCredentialsNonExpired;
@@ -38,6 +41,10 @@ public class ApplicationUser implements UserDetails {
         return name;
     }
 
+    //@Override
+    public String getRole(){
+        return role;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;

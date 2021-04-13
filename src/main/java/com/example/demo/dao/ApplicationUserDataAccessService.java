@@ -46,7 +46,8 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
         List<ApplicationUser> applicationUsers = Lists.newArrayList(
                 new ApplicationUser(
                         UUID.randomUUID(),
-                        ADMIN.getGrantedAuthorities(),
+                        "ADMIN",
+                        //ADMIN.getGrantedAuthorities(),
                         "admin",
                         "admin",
                         passwordEncoder.encode("password"),
@@ -83,14 +84,15 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
             String name = resultSet.getString("name");
-            Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
+            String role = resultSet.getString("role");
+            //Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
             String username = resultSet.getString("username"); //?
             String password = "**********";
             Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
             Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
             Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");
             Boolean isEnabled = resultSet.getBoolean("isEnabled");
-            return new ApplicationUser(id, grantedAuthority, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
+            return new ApplicationUser(id, role, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
         });
     }
 
@@ -103,14 +105,15 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
                 (resultSet, i) -> {
                     UUID userId = UUID.fromString(resultSet.getString("id"));
                     String name = resultSet.getString("name");
-                    Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
+                    //Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
+                    String role = resultSet.getString("role");
                     String username = resultSet.getString("username"); //?
                     String password = "**********";
                     Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
                     Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
                     Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");
                     Boolean isEnabled = resultSet.getBoolean("isEnabled");
-                    return new ApplicationUser(userId, grantedAuthority, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
+                    return new ApplicationUser(userId, role, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
                 });
         return Optional.ofNullable(user);
     }
@@ -126,10 +129,11 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
 
     @Override
     public ApplicationUser updateApplicationUserById(UUID id, ApplicationUser user) {
-        final String sql = "UPDATE ApplicationUser SET  grantedAuthorities = :grantedAuthorities, name = :name, username = :username, password = :password, isAccountNonExpired = :isAccountNonExpired, isAccountNonLocked = :isAccountNonLocked, isCredentialsNonExpired = :isCredentialsNonExpired, isEnabled = :isEnabled where id = :id";
+        final String sql = "UPDATE ApplicationUser SET  role = :role, name = :name, username = :username, password = :password, isAccountNonExpired = :isAccountNonExpired, isAccountNonLocked = :isAccountNonLocked, isCredentialsNonExpired = :isCredentialsNonExpired, isEnabled = :isEnabled where id = :id";
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id)
-                .addValue("grantedAuthorities", user.getAuthorities())
+                //.addValue("grantedAuthorities", user.getAuthorities())
+                .addValue("role", user.getRole())
                 .addValue("name", user.getName())
                 .addValue("username", user.getUsername())
                 .addValue("password", user.getPassword())
@@ -140,6 +144,34 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
 
         namedParameterJdbcTemplate.update(sql, parameters);
         return user;
+    }
+
+    @Override
+    public Boolean login(String username, String password) {
+        final String sql = "Select * from ApplicationUser where username = :username AND password = :password";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("username", username)
+                .addValue("password", passwordEncoder.encode(password));
+//        namedParameterJdbcTemplate.query(sql, parameters);
+        return true;
+
+
+//        ApplicationUser user = jdbcTemplate.queryForObject(
+//                sql,
+//                new Object[]{id},
+//                (resultSet, i) -> {
+//                    UUID userId = UUID.fromString(resultSet.getString("id"));
+//                    String name = resultSet.getString("name");
+//                    //Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
+//                    String role = resultSet.getString("role");
+//                    String username = resultSet.getString("username"); //?
+//                    String password = "**********";
+//                    Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
+//                    Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
+//                    Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");
+//                    Boolean isEnabled = resultSet.getBoolean("isEnabled");
+//                    return new ApplicationUser(userId, role, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
+//                });
     }
 
 //    insert into ApplicationUser(id, name, username, password, IsAccountNonExpired, IsAccountNonLocked, IsCredentialsNonExpired, IsEnabled)

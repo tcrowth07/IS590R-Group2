@@ -1,9 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.ApplicationUserDao;
-import com.example.demo.dao.UserDao;
 import com.example.demo.model.ApplicationUser;
-import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,6 +50,9 @@ public class ApplicationUserService implements UserDetailsService {
         return applicationUserDao.updateApplicationUserById(id, newUser);
     }
 
+    public Boolean login(String username, String password){
+        return applicationUserDao.login(username, password);
+    }
 
 
 

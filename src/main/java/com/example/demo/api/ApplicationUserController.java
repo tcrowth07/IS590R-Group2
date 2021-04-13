@@ -24,15 +24,15 @@ public class ApplicationUserController {
         this.applicationUserService = applicationUserService;
     }
 
-    @GetMapping("login")
-    public String getLoginView() {
-        return "login";
-    }
-
-    @GetMapping("journals")
-    public String getJournals() {
-        return "journals";
-    }
+//    @GetMapping("login")
+//    public String getLoginView() {
+//        return "login";
+//    }
+//
+//    @GetMapping("journals")
+//    public String getJournals() {
+//        return "journals";
+//    }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)

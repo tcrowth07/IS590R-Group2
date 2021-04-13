@@ -8,9 +8,9 @@
 # docker run -p 8080:8080 fullstack_backend
 
 # What do we need to do here to compile the java?
-FROM azul/zulu-openjdk-alpin:11
+FROM azul/zulu-openjdk-alpine:11
 #Rename this to whatever the .jar file is called. The first is the local path, the second is where it will live on the docker image so in this case it will be at the root level.
-ADD target/docker-spring-boot.jar docker-spring-boot.jar
+ADD target/app.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "docker-spring-boot.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
 

@@ -25,6 +25,6 @@ public interface ApplicationUserDao {
 
     ApplicationUser updateApplicationUserById(UUID id, ApplicationUser user);
 
-
+    Boolean login(String username, String password);
 
 }

@@ -49,6 +49,12 @@ jobs:
 #        if: github.ref == '/refs/heads/master' && github.event_name == 'push'
 #        run: terraform apply -auto-approve
 
+  - name: Find and Replace DB URL
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "jdbc:postgresql://localhost:5432/journal"
+        replace: ${{ secrets.DB_HOST }}
+        include: "src/main/resources/application.yaml"
 
 
   build:
@@ -64,6 +70,8 @@ jobs:
       run: mvn -B package --file pom.xml
 
   #test:
+
+
   #deploy:
 
 
