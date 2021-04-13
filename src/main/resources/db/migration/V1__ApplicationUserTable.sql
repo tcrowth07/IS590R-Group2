@@ -1,6 +1,6 @@
 CREATE TABLE ApplicationUser (
     id UUID NOT NULL PRIMARY KEY,
-    role VARCHAR(50),
+    Role VARCHAR(50),
     Name VARCHAR(100) NOT NULL,
     Username VARCHAR(100),
     Password Varchar(50),
@@ -11,5 +11,5 @@ CREATE TABLE ApplicationUser (
 );
 
 insert into ApplicationUser(id, role, name, username, password, IsAccountNonExpired, IsAccountNonLocked, IsCredentialsNonExpired, IsEnabled)
-values('e9065b24-8b01-4d0c-81e3-fb794a83e952', "ADMIN", 'Logan','testUN','password', 1, 1, 1, 1)
+values('e9065b24-8b01-4d0c-81e3-fb794a83e952', 'ADMIN', 'Logan','testUN','password', true, true, true, true)
 
