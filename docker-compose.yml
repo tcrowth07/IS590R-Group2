@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: dockerrocks!
-      POSTGRES_DB: journal
+      POSTGRES_DB: is590db
 
     ports:
       - "5432:5432"

@@ -4,7 +4,7 @@ import com.example.demo.model.ApplicationUser;
 import com.example.demo.service.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 //@Controller
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "api/v1/user")
 @RestController

@@ -1,15 +1,7 @@
-#spring:
-#  datasource:
-#    jdbc-url: jdbc:postgresql://localhost:5432/journal
-
 app:
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/journal
+    jdbc-url: jdbc:postgresql://localhost:5432/is590db
+#    jdbc-url: jdbc:postgresql://is590rdb.cwqe0hexexyg.us-west-2.rds.amazonaws.com:5432/is590db
     username: docker
     password: dockerrocks!
     pool-size: 30
-  jwt:
-    secretKey: "Our Super Secret Test Key which will get overridden"
-    tokenPrefix: "Bearer "
-    tokenExpirationAfterDays: 10
-
