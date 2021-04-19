@@ -45,7 +45,9 @@ public class ApplicationUserController {
     @GetMapping
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<ApplicationUser> getAllUsers() {
-        return applicationUserService.getAllApplicationUsers();
+
+        System.out.println("In Get All Users Function");
+        return applicationUserService.selectAllApplicationUsers();
     }
 
     @GetMapping(path = "/{id}")

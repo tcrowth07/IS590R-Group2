@@ -34,9 +34,12 @@ public class ApplicationUserService implements UserDetailsService {
         return applicationUserDao.insertApplicationUser(user);
     }
 
-    public List<ApplicationUser> getAllApplicationUsers() {
-        return applicationUserDao.selectAllApplicationUsers();
-    }
+//    public List<ApplicationUser> getAllApplicationUsers() {
+//        return applicationUserDao.getAllApplicationUsers();
+//    }
+public List<ApplicationUser> selectAllApplicationUsers() {
+    return applicationUserDao.selectAllApplicationUsers();
+}
 
     public Optional<ApplicationUser> getApplicationUserById(UUID id) {
         return applicationUserDao.selectApplicationUserById(id);
