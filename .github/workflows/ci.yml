@@ -6,55 +6,50 @@ name: Java CI with Maven
 on:
 #  push:
 #    branches: [ master ]
-#  pull_request:
-#    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
 
-  terraform:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-      - uses: actions/checkout@v2
-
-      - name: Setup Terraform
-      - uses: hashicorp/setup-terraform@v1
-
-      - name: Terraform Init
-        id: init
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform init -input=false
-
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
-
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
-
-      - name: Terraform Plan
-        id: plan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform plan -no-color -var="key_name=ecs_is590r" -var="cluster_name=ecs_is590r_cluster"
-        continue-on-error: true
+#  AUTOMATING TERRAFORM
+#  terraform:
+#    name: 'Terraform'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#      - uses: actions/checkout@v2
+#
+#      - name: Setup Terraform
+#      - uses: hashicorp/setup-terraform@v1
+#
+#      - name: Terraform Init
+#        id: init
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: terraform init -input=false
+#
+#      - name: Terraform fmt
+#        id: fmt
+#        run: terraform fmt -check
+#        continue-on-error: true
+#
+#      - name: Terraform Validate
+#        id: validate
+#        run: terraform validate -no-color
+#
+#      - name: Terraform Plan
+#        id: plan
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: terraform plan -no-color -var="key_name=ecs_is590r" -var="cluster_name=ecs_is590r_cluster"
+#        continue-on-error: true
 
 #      - name: Terraform Apply
 #        if: github.ref == '/refs/heads/master' && github.event_name == 'push'
 #        run: terraform apply -auto-approve
 
-  - name: Find and Replace DB URL
-      uses: jacobtomlinson/gha-find-replace@master
-      with:
-        find: "jdbc:postgresql://localhost:5432/journal"
-        replace: ${{ secrets.DB_HOST }}
-        include: "src/main/resources/application.yaml"
 
 
   build:
@@ -62,16 +57,72 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: '11'
+
+    - name: Find and Replace DB URL
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "jdbc:postgresql://localhost:5432/is590db"
+        replace: ${{ secrets.DB_HOST }}
+        include: "src/main/resources/application.yaml"
+
+    - name: Find and Replace DB Username
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "userPostgres"
+        replace: ${{ secrets.DB_USERNAME }}
+        include: "src/main/resources/application.yaml"
+
+    - name: Find and Replace DB Password
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "passwordPostgres"
+        replace: ${{ secrets.DB_PASSWORD }}
+        include: "src/main/resources/application.yaml"
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-  #test:
 
 
-  #deploy:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+    - name: Tests
+      run: mvn test
 
 
+  deploy:
+    runs-on: ubuntu-latest
+    name: 'DeployProd'
+    steps:
+      - name: build
+        run: docker build -t is590 .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Authenticate to ECR Repo
+        run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      - name: tag
+        run: docker tag is590:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/is590:latest
+
+      - name: deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/is590:latest

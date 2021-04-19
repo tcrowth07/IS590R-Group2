@@ -48,16 +48,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
-                .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/api/**").hasRole(USER.name())
-//                .antMatchers(HttpMethod.DELETE, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
-//                .antMatchers(HttpMethod.POST, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
-//                .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
-//                .antMatchers(HttpMethod.GET, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_READ.name())
-                .anyRequest()
-                .authenticated();
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class);
+//                .authorizeRequests()
+//                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+//                .antMatchers("/api/**").hasRole(USER.name())
+////                .antMatchers(HttpMethod.DELETE, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
+////                .antMatchers(HttpMethod.POST, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
+////                .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
+////                .antMatchers(HttpMethod.GET, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_READ.name())
+//                .anyRequest()
+//                .authenticated();
 
     }
 
