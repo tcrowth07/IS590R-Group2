@@ -24,7 +24,6 @@ import static com.example.demo.security.ApplicationUserRole.USER;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final PasswordEncoder passwordEncoder;
@@ -51,10 +50,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
     protected  void configure(HttpSecurity http) throws Exception{
         var jwtTokenFilter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), this.jwtConfig, this.secretKey);
         var jwtTokenVerifier = new JwtTokenVerifier(this.secretKey, this.jwtConfig, this.applicationUserDao); //does the userDao need to be here?
-
-        http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
+        http
                 .csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -64,15 +62,32 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
                 //.addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtTokenVerifier, JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                //.antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/v1/user").permitAll()
-                .antMatchers("/api/**").hasRole(USER.name())
+//                .antMatchers("/login*").permitAll()
+//                .antMatchers("/login").permitAll()
+                //.antMatchers("/api/**").hasRole(USER.name())
 //                .antMatchers(HttpMethod.DELETE, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
 //                .antMatchers(HttpMethod.POST, "/api/**").hasAnyAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
 //                .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_WRITE.name())
 //                .antMatchers(HttpMethod.GET, "/api/**").hasAuthority(ApplicationUserPermission.JOURNAL_READ.name())
-                .anyRequest()
-                .authenticated();
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .formLogin()
+//                .loginPage("/login.html")
+//                .loginProcessingUrl("/perform_login")
+//                .defaultSuccessUrl("/homepage.html", true)
+//                .failureUrl("/login.html?error=true")
+//                .failureHandler(authenticationFailureHandler())
+//                .and()
+//                .logout()
+//                .logoutUrl("/perform_logout")
+//                .deleteCookies("JSESSIONID")
+//                .logoutSuccessHandler(logoutSuccessHandler());
+
+
+        ;
 
     }
 
@@ -80,6 +95,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.authenticationProvider(daoAuthenticationProvider());
+//        auth.inMemoryAuthentication()
+//                .withUser("user1").password(passwordEncoder.encode("user1Pass")).roles("USER")
+//                .and()
+//                .withUser("user2").password(passwordEncoder.encode("user2Pass")).roles("USER")
+//                .and()
+//                .withUser("admin").password(passwordEncoder.encode("adminPass")).roles("ADMIN");
     }
 
     @Bean

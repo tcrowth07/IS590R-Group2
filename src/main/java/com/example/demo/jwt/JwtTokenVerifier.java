@@ -1,5 +1,6 @@
 package com.example.demo.jwt;
 
+import com.example.demo.dao.ApplicationUserDao;
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
