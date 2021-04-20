@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "terraformeksproject"
+    bucket = "is590r"
     key    = "state.tfstate"
   }
 }
@@ -15,8 +15,9 @@ terraform {
 provider "aws" {}
 
 
+
 resource "aws_vpc" "vpc" {
-  cidr_block = "10.0.0.0/24"
+  cidr_block = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags       = {
@@ -30,7 +31,12 @@ resource "aws_internet_gateway" "internet_gateway" {
 
 resource "aws_subnet" "pub_subnet" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = "10.1.0.0/22"
+  cidr_block              = "10.0.0.0/24"
+}
+
+resource "aws_subnet" "pub_subnet2" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.0.1.0/24"
 }
 
 resource "aws_route_table" "public" {
@@ -116,7 +122,7 @@ resource "aws_iam_role" "ecs_agent" {
 
 
 resource "aws_iam_role_policy_attachment" "ecs_agent" {
-  role       = "aws_iam_role.ecs_agent.name"
+  role       = aws_iam_role.ecs_agent.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
@@ -126,7 +132,7 @@ resource "aws_iam_instance_profile" "ecs_agent" {
 }
 
 resource "aws_launch_configuration" "ecs_launch_config" {
-  image_id             = "ami-094d4d00fd7462815"
+  image_id             = "ami-00780848600d687b6"
   iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
   security_groups      = [aws_security_group.ecs_sg.id]
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config"
@@ -134,7 +140,11 @@ resource "aws_launch_configuration" "ecs_launch_config" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  subnet_ids  = [aws_subnet.pub_subnet.id]
+  name       = "main"
+  subnet_ids  = [aws_subnet.pub_subnet.id, aws_subnet.pub_subnet2.id]
+  tags = {
+    Name = "My DB subnet group"
+  }
 }
 
 resource "aws_ecr_repository" "worker" {
@@ -146,41 +156,41 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 }
 
 
-resource "aws_ecs_task_definition" "task_definition" {
-  family                = "worker"
-  container_definitions = jsonencode([
-    {
-      essential = true,
-      memory = 128,
-      name = "worker",
-      cpu = 1,
-      image = "${REPOSITORY_URL}:latest",
-      environment = []
-      portMappings = [
-        {
-          containerPort = 443
-          hostPort      = 443
-        },
-        {
-          containerPort = 8080
-          hostPort      = 8080
-        },
-        {
-          containerPort = 80
-          hostPort      = 80
-        }
-      ]
-    }
-  ])
-}
-
-
-resource "aws_ecs_service" "worker" {
-  name            = "worker"
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.task_definition.arn
-  desired_count   = 2
-}
+//resource "aws_ecs_task_definition" "task_definition" {
+//  family                = "worker"
+//  container_definitions = jsonencode([
+//    {
+//      essential = true,
+//      memory = 128,
+//      name = "worker",
+//      cpu = 1,
+//      image = "${REPOSITORY_URL}:latest",
+//      environment = []
+//      portMappings = [
+//        {
+//          containerPort = 443
+//          hostPort      = 443
+//        },
+//        {
+//          containerPort = 8080
+//          hostPort      = 8080
+//        },
+//        {
+//          containerPort = 80
+//          hostPort      = 80
+//        }
+//      ]
+//    }
+//  ])
+//}
+//
+//
+//resource "aws_ecs_service" "worker" {
+//  name            = "worker"
+//  cluster         = aws_ecs_cluster.ecs_cluster.id
+//  task_definition = aws_ecs_task_definition.task_definition.arn
+//  desired_count   = 2
+//}
 
 
 
