@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 //import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class ApplicationUserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String addUser(@RequestBody ApplicationUser user) {
-        return applicationUserService.addApplicationUser(user);
+            return applicationUserService.addApplicationUser(user);
     }
 
     @GetMapping
