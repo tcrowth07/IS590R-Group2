@@ -30,7 +30,7 @@ public class ApplicationUserService implements UserDetailsService {
     }
 
 
-    public String addApplicationUser(ApplicationUser user) {
+    public ApplicationUser addApplicationUser(ApplicationUser user) {
         return applicationUserDao.insertApplicationUser(user);
     }
 

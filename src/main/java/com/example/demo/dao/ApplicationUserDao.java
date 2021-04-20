@@ -10,9 +10,9 @@ import java.util.UUID;
 public interface ApplicationUserDao {
     public Optional<ApplicationUser> selectApplicationUserByUsername(String username);
 
-    String insertApplicationUser(UUID id, ApplicationUser user);
+    ApplicationUser insertApplicationUser(UUID id, ApplicationUser user);
 
-    default String insertApplicationUser(ApplicationUser user) {
+    default ApplicationUser insertApplicationUser(ApplicationUser user) {
         UUID id = UUID.randomUUID();
         return insertApplicationUser(id, user);
     }

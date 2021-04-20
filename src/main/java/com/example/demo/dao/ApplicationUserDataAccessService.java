@@ -61,7 +61,7 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
 
     //Everything below here originated in UserDataAccessService and was copied over and modified.
     @Override
-    public String insertApplicationUser(UUID id, ApplicationUser user) {
+    public ApplicationUser insertApplicationUser(UUID id, ApplicationUser user) {
         final String sql = "INSERT INTO ApplicationUser(id, grantedPermissions, name, username, password, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled) values(:id, :grantedPermissions, :name, :username, :password, :isAccountNonExpired, :isAccountNonLocked, :isCredentialsNonExpired, :isEnabled)";
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id)
@@ -75,7 +75,8 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
                 .addValue("isEnabled", true);
         //.addValue("address", user.getPassword());
         namedParameterJdbcTemplate.update(sql, parameters);
-        return "User " + user.getName() + " was added.";
+//        return "User " + user.getName() + " was added.";
+        return new ApplicationUser(id, user.getRole(), user.getName(), user.getUsername(), "*******", user.isAccountNonExpired(), user.isAccountNonLocked(), user.isCredentialsNonExpired(), user.isEnabled());
     }
 
     @Override

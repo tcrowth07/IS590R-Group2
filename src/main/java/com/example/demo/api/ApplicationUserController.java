@@ -39,7 +39,7 @@ public class ApplicationUserController {
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String addUser(@RequestBody ApplicationUser user) {
+    public ApplicationUser addUser(@RequestBody ApplicationUser user) {
             return applicationUserService.addApplicationUser(user);
     }
 
