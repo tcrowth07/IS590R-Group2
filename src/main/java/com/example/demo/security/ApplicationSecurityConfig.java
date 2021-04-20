@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.dao.ApplicationUserDao;
 import com.example.demo.service.ApplicationUserService;
 import com.example.demo.jwt.JwtConfig;
 import com.example.demo.jwt.JwtTokenVerifier;
@@ -30,25 +31,38 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
     private final ApplicationUserService applicationUserService;
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
+    private final ApplicationUserDao applicationUserDao;
 
     @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService, SecretKey secretKey, JwtConfig jwtConfig) {
+    public ApplicationSecurityConfig(
+            PasswordEncoder passwordEncoder,
+            ApplicationUserService applicationUserService,
+            SecretKey secretKey,
+            JwtConfig jwtConfig,
+            ApplicationUserDao applicationUserDao) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
+        this.applicationUserDao = applicationUserDao;
     }
 
     @Override
     protected  void configure(HttpSecurity http) throws Exception{
+        var jwtTokenFilter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), this.jwtConfig, this.secretKey);
+        var jwtTokenVerifier = new JwtTokenVerifier(this.secretKey, this.jwtConfig, this.applicationUserDao); //does the userDao need to be here?
+
         http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilter(jwtTokenFilter)
+                //.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+                //.addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilterAfter(jwtTokenVerifier, JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/v1/user").permitAll()

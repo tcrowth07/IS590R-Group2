@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -27,11 +28,14 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
+    private final ApplicationUserDao applicationUserDao;
 
     public JwtTokenVerifier(SecretKey secretKey,
-                            JwtConfig jwtConfig) {
+                            JwtConfig jwtConfig,
+                            ApplicationUserDao applicationUserDao) {
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
+        this.applicationUserDao = applicationUserDao;
     }
 
     @Override
@@ -60,7 +64,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
             var authorities = (List<Map<String, String>>) body.get("authorities");
 
-            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities
+                    .stream()
                     .map(m -> new SimpleGrantedAuthority(m.get("authority")))
                     .collect(Collectors.toSet());
 
@@ -72,7 +77,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (JwtException e) {
+        } catch (JwtException | UsernameNotFoundException e) {
             throw new IllegalStateException(String.format("Token %s cannot be trusted", token));
         }
 
