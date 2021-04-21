@@ -106,6 +106,39 @@ jobs:
     runs-on: ubuntu-latest
     name: 'DeployProd'
     steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Find and Replace DB URL
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "jdbc:postgresql://localhost:5432/is590db"
+          replace: ${{ secrets.DB_HOST }}
+          include: "src/main/resources/application.yml"
+
+      - name: Find and Replace DB Username
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "userPostgres"
+          replace: ${{ secrets.DB_USERNAME }}
+          include: "src/main/resources/application.yml"
+
+      - name: Find and Replace DB Password
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "passwordPostgres"
+          replace: ${{ secrets.DB_PASSWORD }}
+          include: "src/main/resources/application.yml"
+
+      - name: Build with Maven
+        run: mvn -B clean package --file pom.xml
+
       - name: build
         run: docker build -t worker .
 
