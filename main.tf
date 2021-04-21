@@ -32,11 +32,13 @@ resource "aws_internet_gateway" "internet_gateway" {
 resource "aws_subnet" "pub_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = "10.0.0.0/24"
+  availability_zone = "us-west-2c"
 }
 
 resource "aws_subnet" "pub_subnet2" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
 }
 
 resource "aws_route_table" "public" {
@@ -137,6 +139,7 @@ resource "aws_launch_configuration" "ecs_launch_config" {
   security_groups      = [aws_security_group.ecs_sg.id]
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=my-cluster >> /etc/ecs/ecs.config"
   instance_type        = "t2.micro"
+  associate_public_ip_address = true
 }
 
 resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
@@ -151,13 +154,13 @@ resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
   health_check_type         = "EC2"
 }
 
-resource "aws_db_subnet_group" "db_subnet_group" {
-  name       = "main"
-  subnet_ids  = [aws_subnet.pub_subnet.id, aws_subnet.pub_subnet2.id]
-  tags = {
-    Name = "My DB subnet group"
-  }
-}
+//resource "aws_db_subnet_group" "db_subnet_group" {
+//  name       = "main"
+//  subnet_ids  = [aws_subnet.pub_subnet.id, aws_subnet.pub_subnet2.id]
+//  tags = {
+//    Name = "My DB subnet group"
+//  }
+//}
 
 resource "aws_ecr_repository" "worker" {
   name  = "worker"
