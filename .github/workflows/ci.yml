@@ -4,8 +4,8 @@
 name: Java CI with Maven
 
 on:
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -67,21 +67,21 @@ jobs:
       with:
         find: "jdbc:postgresql://localhost:5432/is590db"
         replace: ${{ secrets.DB_HOST }}
-        include: "src/main/resources/application.yaml"
+        include: "src/main/resources/application.yml"
 
     - name: Find and Replace DB Username
       uses: jacobtomlinson/gha-find-replace@master
       with:
         find: "userPostgres"
         replace: ${{ secrets.DB_USERNAME }}
-        include: "src/main/resources/application.yaml"
+        include: "src/main/resources/application.yml"
 
     - name: Find and Replace DB Password
       uses: jacobtomlinson/gha-find-replace@master
       with:
         find: "passwordPostgres"
         replace: ${{ secrets.DB_PASSWORD }}
-        include: "src/main/resources/application.yaml"
+        include: "src/main/resources/application.yml"
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
@@ -118,6 +118,7 @@ jobs:
 
       - name: Authenticate to ECR Repo
         run: aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
       - name: tag
         run: docker tag worker:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/worker:latest
 #        run: docker tag is590:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/is590:latest
