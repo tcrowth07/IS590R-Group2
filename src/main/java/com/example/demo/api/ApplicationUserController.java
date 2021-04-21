@@ -44,7 +44,7 @@ public class ApplicationUserController {
     }
 
     @GetMapping
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<ApplicationUser> getAllUsers() {
 
         System.out.println("In Get All Users Function");
@@ -52,19 +52,25 @@ public class ApplicationUserController {
     }
 
     @GetMapping(path = "/{id}")
-//    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ApplicationUser getUserById(@PathVariable("id") UUID id){
         return applicationUserService.selectApplicationUserById(id).orElse(null);
     }
 
+    @GetMapping(path = "/username/{username}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ApplicationUser getUserById(@PathVariable("username") String username){
+        return applicationUserService.selectApplicationUserByUsername(username).orElse(null);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-//    @PreAuthorize("hasAuthority('user:write')")
+    @PreAuthorize("hasAuthority('user:write')")
     public @ResponseBody String deleteApplicationUserById(@PathVariable("id") UUID id){
         applicationUserService.deleteApplicationUser(id);
         return "Deleted";
     }
 
-//    @PreAuthorize("hasAuthority('user:write')")
+    @PreAuthorize("hasAuthority('user:write')")
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public @ResponseBody String updateApplicationUser(@PathVariable("id") UUID id, @RequestBody ApplicationUser userToUpdate) {
         applicationUserService.updateApplicationUser(id, userToUpdate);

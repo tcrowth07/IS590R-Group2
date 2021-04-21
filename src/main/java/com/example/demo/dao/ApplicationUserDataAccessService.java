@@ -46,6 +46,7 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
                     String role = resultSet.getString("role");
 //                    username = resultSet.getString("username"); //?
                     String password = resultSet.getString("password");
+//                    String password = "*********";
                     Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
                     Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
                     Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");

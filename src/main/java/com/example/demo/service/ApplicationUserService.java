@@ -45,6 +45,10 @@ public List<ApplicationUser> selectAllApplicationUsers() {
         return applicationUserDao.selectApplicationUserById(id);
     }
 
+    public Optional<ApplicationUser> selectApplicationUserByUsername(String username) {
+        return applicationUserDao.selectApplicationUserByUsername(username);
+    }
+
     public String deleteApplicationUser(UUID id){
         return applicationUserDao.deleteApplicationUserById(id);
     }
