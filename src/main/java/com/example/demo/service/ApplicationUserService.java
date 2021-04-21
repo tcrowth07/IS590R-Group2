@@ -41,7 +41,7 @@ public List<ApplicationUser> selectAllApplicationUsers() {
     return applicationUserDao.selectAllApplicationUsers();
 }
 
-    public Optional<ApplicationUser> getApplicationUserById(UUID id) {
+    public Optional<ApplicationUser> selectApplicationUserById(UUID id) {
         return applicationUserDao.selectApplicationUserById(id);
     }
 

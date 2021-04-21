@@ -8,6 +8,7 @@ import com.example.demo.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -58,12 +59,35 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(jwtTokenFilter)
-                //.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
-                //.addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .addFilterAfter(jwtTokenVerifier, JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                //.antMatchers("/", "index", "/css/*", "/js/*").permitAll()
-                .antMatchers("/api/v1/user").permitAll()
+                .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/v1/user").permitAll()
+                .anyRequest()
+                .authenticated();
+
+    }
+
+
+
+//    @Override
+//    protected  void configure(HttpSecurity http) throws Exception{
+//        var jwtTokenFilter = new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), this.jwtConfig, this.secretKey);
+//        var jwtTokenVerifier = new JwtTokenVerifier(this.secretKey, this.jwtConfig, this.applicationUserDao); //does the userDao need to be here?
+////                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+////                .and()
+//        http
+//                .csrf().disable()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .addFilter(jwtTokenFilter)
+//                //.addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+//                //.addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
+//                .addFilterAfter(jwtTokenVerifier, JwtUsernameAndPasswordAuthenticationFilter.class)
+//                .authorizeRequests()
+//                //.antMatchers("/", "index", "/css/*", "/js/*").permitAll()
+//                .antMatchers("/api/v1/user").permitAll()
 //                .antMatchers("/login*").permitAll()
 //                .antMatchers("/login").permitAll()
                 //.antMatchers("/api/**").hasRole(USER.name())
@@ -89,7 +113,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
 
         ;
 
-    }
+//    }
 
 
     @Override

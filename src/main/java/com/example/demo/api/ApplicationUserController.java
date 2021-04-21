@@ -4,8 +4,8 @@ import com.example.demo.model.ApplicationUser;
 import com.example.demo.service.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
@@ -54,7 +54,7 @@ public class ApplicationUserController {
     @GetMapping(path = "/{id}")
 //    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ApplicationUser getUserById(@PathVariable("id") UUID id){
-        return applicationUserService.getApplicationUserById(id).orElse(null);
+        return applicationUserService.selectApplicationUserById(id).orElse(null);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

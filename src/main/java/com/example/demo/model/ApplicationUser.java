@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,7 +25,7 @@ public class ApplicationUser implements UserDetails {
     private final boolean isCredentialsNonExpired;
     private final boolean isEnabled;
     //public ApplicationUser(UUID id, Set<? extends GrantedAuthority> grantedAuthorities, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
-    public ApplicationUser(UUID id, String role, String name, String username, String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
+    public ApplicationUser(UUID id, String role, @JsonProperty("name") String name, @JsonProperty("username") String username, @JsonProperty("password") String password, boolean isAccountNonExpired, boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean isEnabled) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -37,6 +38,8 @@ public class ApplicationUser implements UserDetails {
     }
 
     //I don't think this needs an override because the UserDetails interface doesn't have the getName method
+    public UUID getId() {return id;}
+
     public String getName() {
         return name;
     }

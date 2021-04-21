@@ -35,60 +35,74 @@ public class ApplicationUserDataAccessService implements ApplicationUserDao {
 
     @Override
     public Optional<ApplicationUser> selectApplicationUserByUsername(String username) {
-        return getApplicationUsers()
-                .stream()
-                .filter(applicationUser -> username.equals(applicationUser.getUsername()))
-                .findFirst();
+        final String sql = "SELECT * FROM applicationuser WHERE username = ?";
+        ApplicationUser user = jdbcTemplate.queryForObject(
+                sql,
+                new Object[]{username},
+                (resultSet, i) -> {
+                    UUID userId = UUID.fromString(resultSet.getString("id"));
+                    String name = resultSet.getString("name");
+//                    Set<? extends GrantedAuthority> grantedAuthorities =
+                    String role = resultSet.getString("role");
+//                    username = resultSet.getString("username"); //?
+                    String password = resultSet.getString("password");
+                    Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
+                    Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
+                    Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");
+                    Boolean isEnabled = resultSet.getBoolean("isEnabled");
+                    return new ApplicationUser(userId, role, name, username, password, accNonExp, accNonLock, credNonExp, isEnabled);
+                });
+        return Optional.ofNullable(user);
     }
 
     //This one might be a duplicate of selectAllApplicationUsers
-    private List<ApplicationUser> getApplicationUsers(){
-        List<ApplicationUser> applicationUsers = Lists.newArrayList(
-                new ApplicationUser(
-                        UUID.randomUUID(),
-                        "ADMIN",
-                        //ADMIN.getGrantedAuthorities(),
-                        "admin",
-                        "admin",
-                        passwordEncoder.encode("password"),
-                        true,
-                        true,
-                        true,
-                        true
-                ));
-        return applicationUsers;
-    }
+//    private List<ApplicationUser> getApplicationUsers(){
+//        List<ApplicationUser> applicationUsers = Lists.newArrayList(
+//                new ApplicationUser(
+//                        UUID.randomUUID(),
+//                        "ADMIN",
+//                        //ADMIN.getGrantedAuthorities(),
+//                        "admin",
+//                        "admin",
+//                        passwordEncoder.encode("password"),
+//                        true,
+//                        true,
+//                        true,
+//                        true
+//                ));
+//        return applicationUsers;
+//    }
 
     //Everything below here originated in UserDataAccessService and was copied over and modified.
     @Override
     public ApplicationUser insertApplicationUser(UUID id, ApplicationUser user) {
-        final String sql = "INSERT INTO ApplicationUser(id, grantedPermissions, name, username, password, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled) values(:id, :grantedPermissions, :name, :username, :password, :isAccountNonExpired, :isAccountNonLocked, :isCredentialsNonExpired, :isEnabled)";
+        final String sql = "INSERT INTO ApplicationUser(id, role, name, username, password, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled) values(:id, :role, :name, :username, :password, :isAccountNonExpired, :isAccountNonLocked, :isCredentialsNonExpired, :isEnabled)";
         SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id)
-                .addValue("grantedPermissions", user.getAuthorities())
+                .addValue("role", "ADMIN")
                 .addValue("name", user.getName())
                 .addValue("username", user.getUsername())
                 .addValue("password", passwordEncoder.encode(user.getPassword()))
                 .addValue("isAccountNonExpired", true)
-                .addValue("isAccountNonLocked:", true)
+                .addValue("isAccountNonLocked", true)
                 .addValue("isCredentialsNonExpired", true)
                 .addValue("isEnabled", true);
         //.addValue("address", user.getPassword());
         namedParameterJdbcTemplate.update(sql, parameters);
 //        return "User " + user.getName() + " was added.";
-        return new ApplicationUser(id, user.getRole(), user.getName(), user.getUsername(), "*******", user.isAccountNonExpired(), user.isAccountNonLocked(), user.isCredentialsNonExpired(), user.isEnabled());
+        return new ApplicationUser(id, user.getRole(), user.getName(), user.getUsername(), user.getPassword(), user.isAccountNonExpired(), user.isAccountNonLocked(), user.isCredentialsNonExpired(), user.isEnabled());
     }
 
     @Override
     public List<ApplicationUser> selectAllApplicationUsers() {
-        final String sql = "SELECT * FROM ApplicationUser";
+        final String sql = "SELECT id, name, role, username, password, isAccountNonExpired, isAccountNonLocked, isCredentialsNonExpired, isEnabled FROM ApplicationUser";
         return jdbcTemplate.query(sql, (resultSet, i) -> {
             UUID id = UUID.fromString(resultSet.getString("id"));
+            System.out.println(id);
             String name = resultSet.getString("name");
             String role = resultSet.getString("role");
-            //Set<? extends GrantedAuthority> grantedAuthorities = resultSet("grantedAuthorities");
             String username = resultSet.getString("username"); //?
-            String password = "**********";
+            String password = "---------";
             Boolean accNonExp = resultSet.getBoolean("isAccountNonExpired");
             Boolean accNonLock = resultSet.getBoolean("isAccountNonLocked");
             Boolean credNonExp = resultSet.getBoolean("isCredentialsNonExpired");

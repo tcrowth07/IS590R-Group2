@@ -1,6 +1,6 @@
 app:
   datasource:
     jdbc-url: jdbc:postgresql://localhost:5432/is590db
-    username: userPostgres
-    password: passwordPostgres
+    username: docker
+    password: dockerrocks!
     pool-size: 30
