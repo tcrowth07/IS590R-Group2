@@ -139,6 +139,18 @@ resource "aws_launch_configuration" "ecs_launch_config" {
   instance_type        = "t2.micro"
 }
 
+resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
+  name                      = "asg"
+  vpc_zone_identifier       = [aws_subnet.pub_subnet.id]
+  launch_configuration      = aws_launch_configuration.ecs_launch_config.name
+
+  desired_capacity          = 2
+  min_size                  = 1
+  max_size                  = 5
+  health_check_grace_period = 300
+  health_check_type         = "EC2"
+}
+
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "main"
   subnet_ids  = [aws_subnet.pub_subnet.id, aws_subnet.pub_subnet2.id]
@@ -156,43 +168,45 @@ resource "aws_ecs_cluster" "ecs_cluster" {
 }
 
 
-//resource "aws_ecs_task_definition" "task_definition" {
-//  family                = "worker"
-//  container_definitions = jsonencode([
-//    {
-//      essential = true,
-//      memory = 128,
-//      name = "worker",
-//      cpu = 1,
-//      image = "${REPOSITORY_URL}:latest",
-//      environment = []
-//      portMappings = [
-//        {
-//          containerPort = 443
-//          hostPort      = 443
-//        },
-//        {
-//          containerPort = 8080
-//          hostPort      = 8080
-//        },
-//        {
-//          containerPort = 80
-//          hostPort      = 80
-//        }
-//      ]
-//    }
-//  ])
-//}
+resource "aws_ecs_task_definition" "task_definition" {
+  family                = "worker"
+  container_definitions = jsonencode([
+    {
+      essential = true,
+      memory = 256,
+      name = "worker",
+      cpu = 1,
+      image = "213310144937.dkr.ecr.us-west-2.amazonaws.com/worker:latest",
+      environment = []
+      portMappings = [
+        {
+          containerPort = 443
+          hostPort      = 443
+        },
+        {
+          containerPort = 8080
+          hostPort      = 8080
+        },
+        {
+          containerPort = 80
+          hostPort      = 80
+        }
+      ]
+    }
+  ])
+}
 //
 //
-//resource "aws_ecs_service" "worker" {
-//  name            = "worker"
-//  cluster         = aws_ecs_cluster.ecs_cluster.id
-//  task_definition = aws_ecs_task_definition.task_definition.arn
-//  desired_count   = 2
-//}
+resource "aws_ecs_service" "worker" {
+  name            = "worker"
+  cluster         = aws_ecs_cluster.ecs_cluster.id
+  task_definition = aws_ecs_task_definition.task_definition.arn
+  desired_count   = 2
+}
 
-
+output "ecr_repository_worker_endpoint" {
+  value = aws_ecr_repository.worker.repository_url
+}
 
 //
 //resource "aws_instance" "web-server-instance" {
