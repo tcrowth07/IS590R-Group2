@@ -59,6 +59,13 @@ resource "aws_security_group" "ecs_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
@@ -147,9 +154,9 @@ resource "aws_autoscaling_group" "failure_analysis_ecs_asg" {
   vpc_zone_identifier       = [aws_subnet.pub_subnet.id]
   launch_configuration      = aws_launch_configuration.ecs_launch_config.name
 
-  desired_capacity          = 2
+  desired_capacity          = 1
   min_size                  = 1
-  max_size                  = 5
+  max_size                  = 1
   health_check_grace_period = 300
   health_check_type         = "EC2"
 }
