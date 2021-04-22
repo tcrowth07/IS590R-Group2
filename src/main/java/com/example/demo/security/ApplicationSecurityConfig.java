@@ -19,6 +19,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.SecretKey;
 import javax.servlet.*;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.example.demo.security.ApplicationUserRole.USER;
 
@@ -55,9 +58,20 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
     }
 
     @Bean
-    CorsFilter corsFilter() {
-        CorsFilter filter = new CorsFilter();
-        return filter;
+    public CorsConfigurationSource corsConfigurationSource() {
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://is590r.s3-us-west-2.amazonaws.com"));
+//        configuration.applyPermitDefaultValues();
+        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH"));
+        // When using setAllowCredentials(true), we cannot use '*' as the allowed origin header
+        configuration.setAllowCredentials(true);
+        // setAllowed is important! Without it, Options preflight request
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        // Needed so that client can access the authorization headers
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Override
@@ -68,7 +82,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
 //                .and()
         http
                 //.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
-                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .cors()
                 .and()
                 //.addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
                 .csrf().disable()
