@@ -14,7 +14,7 @@ import java.util.UUID;
 
 //@Controller
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RequestMapping(value = "/api/v1/user")
 @RestController
 public class ApplicationUserController {

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RequestMapping("api/v1/journalentry")
 @RestController
 
@@ -48,13 +48,13 @@ public class JournalEntryController {
         return journalEntryService.getJournalEntryById(id).orElse(null);
     }
 
-    @DeleteMapping(path = "{id}")
+    @DeleteMapping(path = "/{id}")
 //    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void deleteJournalEntryById(@PathVariable UUID id){
         journalEntryService.deleteJournalEntry(id);
     }
 
-    @PutMapping(path = "{id}")
+    @PutMapping(path = "/{id}")
 //    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public void updateJournalEntry(@PathVariable UUID id, @RequestBody JournalEntry journalEntryToUpdate) {
         journalEntryService.updateJournalEntry(id, journalEntryToUpdate);
