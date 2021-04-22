@@ -36,9 +36,7 @@ public class ApplicationUserController {
 //        return "journals";
 //    }
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
+    @PostMapping
     public ApplicationUser addUser(@RequestBody ApplicationUser user) {
             return applicationUserService.addApplicationUser(user);
     }
